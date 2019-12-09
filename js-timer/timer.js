@@ -14,6 +14,9 @@ class Timer {
   }
 
   start = () => {
+    // Clear any existing interval in case user presses start more than once
+    clearInterval(this.interval);
+
     if (this.onStart) {
       this.onStart(this.timeRemaining);
     }
