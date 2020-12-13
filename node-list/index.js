@@ -1,8 +1,15 @@
 #!/usr/bin/env node
 
 const fs = require("fs");
+const util = require("util");
 
-fs.readdir(process.cwd(), (err, filenames) => {
+// Method #2
+// const lstat = util.promisify(fs.lstat);
+
+// Method #3
+const { lstat } = fs.promises;
+
+fs.readdir(process.cwd(), async (err, filenames) => {
   if (err) {
     console.log(err);
   }
@@ -18,27 +25,61 @@ fs.readdir(process.cwd(), (err, filenames) => {
   // }
 
   // Better version 1
-  const allStats = Array(filenames.length).fill(null);
+  // const allStats = Array(filenames.length).fill(null);
 
-  for (let filename of filenames) {
-    const index = filenames.indexOf(filename);
+  // for (let filename of filenames) {
+  //   const index = filenames.indexOf(filename);
 
-    fs.lstat(filename, (err, stats) => {
-      if (err) {
-        console.log(err);
-      }
+  //   fs.lstat(filename, (err, stats) => {
+  //     if (err) {
+  //       console.log(err);
+  //     }
 
-      allStats[index] = stats;
+  //     allStats[index] = stats;
 
-      const ready = allStats.every((stats) => {
-        return stats;
-      });
+  //     const ready = allStats.every((stats) => {
+  //       return stats;
+  //     });
 
-      if (ready) {
-        allStats.forEach((stats, index) => {
-          console.log(filenames[index], stats.isFile());
-        });
-      }
-    });
+  //     if (ready) {
+  //       allStats.forEach((stats, index) => {
+  //         console.log(filenames[index], stats.isFile());
+  //       });
+  //     }
+  //   });
+  // }
+
+  // Better version 2
+  // for (let filename of filenames) {
+  //   try {
+  //     const stats = await lstat(filename);
+  //     console.log(filename, stats.isFile());
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  // }
+
+  // Better version 3
+  const statPromises = filenames.map((filename) => {
+    return lstat(filename);
+  });
+
+  const allStats = await Promise.all(statPromises);
+
+  for (let stats of allStats) {
+    const index = allStats.indexOf(stats);
+    console.log(filenames[index], stats.isFile());
   }
 });
+
+// Method #1
+// const lstat = (filename) => {
+//   return new Promise((resolve, reject) => {
+//     fs.lstat(filename, (err, stats) => {
+//       if (err) {
+//         reject(err);
+//       }
+//       resolve(stats);
+//     });
+//   });
+// };
