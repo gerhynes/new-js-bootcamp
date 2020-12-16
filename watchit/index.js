@@ -5,6 +5,7 @@ const chokidar = require("chokidar");
 const program = require("caporal");
 const fs = require("fs");
 const { spawn } = require("child_process");
+const chalk = require("chalk");
 
 program
   .version("0.0.1")
@@ -22,12 +23,16 @@ program
     const start = debounce(() => {
       if (proc) {
         proc.kill();
+        console.log(chalk.bold.blue(">>>> Ending process..."));
       }
+      console.log(chalk.bold.green(">>>> Starting process..."));
       proc = spawn("node", [name], { stdio: "inherit" });
     }, 100);
 
     chokidar
-      .watch(".")
+      .watch(".", {
+        ignored: /\.git.|node_modules/
+      })
       .on("add", start)
       .on("change", start)
       .on("unlink", start);
