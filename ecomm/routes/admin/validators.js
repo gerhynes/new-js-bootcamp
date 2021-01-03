@@ -34,6 +34,8 @@ module.exports = {
       if (passwordConfirmation !== req.body.password) {
         throw new Error("Passwords must match");
       }
+      // custom validators that return nothing fail with "Invalid Value"
+      return true;
     }),
   requireEmailExists: check("email")
     .trim()
