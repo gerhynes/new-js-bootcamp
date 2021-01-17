@@ -15,7 +15,7 @@ const fetchData = async (searchTerm) => {
 
 const root = document.querySelector(".autocomplete");
 root.innerHTML = `
-  <label><b>Search for a Movie</b>
+  <label><h2 class="title is-5">Search for a Movie</h2>
     <input class="input" />
   </label>
   <div class="dropdown">
@@ -81,5 +81,24 @@ const onMovieSelect = async (movie) => {
     }
   });
 
-  console.log(response.data);
+  document.querySelector("#summary").innerHTML = movieTemplate(response.data);
+};
+
+const movieTemplate = (movieDetail) => {
+  return `
+    <article class="media">
+      <figure class="media-left">
+        <p class="image">
+          <img src="${movieDetail.Poster}" alt="${movieDetail.Title}"/>
+        </p>
+      </figure>
+      <div class="media-content">
+        <div class="content">
+          <h3>${movieDetail.Title}</h3>
+          <h4>${movieDetail.Genre}</h4>
+          <p>${movieDetail.Plot}</p>
+        </div>
+      </div>
+    </article>
+  `;
 };
