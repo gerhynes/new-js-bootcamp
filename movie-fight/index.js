@@ -16,7 +16,7 @@ const fetchData = async (searchTerm) => {
 const root = document.querySelector(".autocomplete");
 root.innerHTML = `
   <label><b>Search for a Movie</b>
-  <input class="input" />
+    <input class="input" />
   </label>
   <div class="dropdown">
     <div class="dropdown-menu">
@@ -31,6 +31,11 @@ const resultsWrapper = document.querySelector(".results");
 
 const onInput = async (event) => {
   const movies = await fetchData(event.target.value);
+
+  if (!movies.length) {
+    dropdown.classList.remove("is-active");
+    return;
+  }
 
   // Clear any existing results
   resultsWrapper.innerHTML = "";
@@ -54,3 +59,10 @@ const onInput = async (event) => {
 };
 
 input.addEventListener("input", debounce(onInput, 500));
+
+// Close dropdown on click elsewhere
+document.addEventListener("click", (event) => {
+  if (!root.contains(event.target)) {
+    dropdown.classList.remove("is-active");
+  }
+});
