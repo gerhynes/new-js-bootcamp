@@ -1,5 +1,4 @@
 document.querySelector("form").addEventListener("submit", (event) => {
-  console.log("Connected");
   event.preventDefault();
 
   const { value } = document.querySelector("input");
